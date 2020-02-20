@@ -17,7 +17,7 @@ import java.util.*
 class PhotoUtils {
 
     companion object {
-        private fun getPath(context : Context, uri: Uri): String { //39. 갤러리에서 인텐트로 받은 이미지의 주소(uri)는 한번에 안받아지므로 따로 정의해주는 매쏘드
+        private fun getPath(context: Context, uri: Uri): String { //39. 갤러리에서 인텐트로 받은 이미지의 주소(uri)는 한번에 안받아지므로 따로 정의해주는 매쏘드
             val projection = arrayOf(MediaStore.Images.Media.DATA)
             val cursorLoader = CursorLoader(context, uri, projection, null, null, null)
             val cursor = cursorLoader.loadInBackground() ?: return "null"
@@ -26,8 +26,8 @@ class PhotoUtils {
             return cursor.getString(index)
         }
 
-        fun copyImageFile(context : Context,srcUri: Uri, destFile: File) {
-            var srcFile = File(getPath(context,srcUri))
+        fun copyImageUriToFile(context: Context, srcUri: Uri, destFile: File) {
+            var srcFile = File(getPath(context, srcUri))
 
             srcFile.inputStream().use { fis ->
                 destFile.outputStream().use { fos ->
@@ -40,8 +40,8 @@ class PhotoUtils {
 
             var imageView = ImageView(view.context)
             imageView.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
             )
             imageView.adjustViewBounds = true
             when (uri) {

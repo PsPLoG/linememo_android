@@ -10,17 +10,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.psplog.linememo.R
-import com.psplog.linememo.ui.main.ContentActivity
-import com.psplog.linememo.utils.database.Memo
+import com.psplog.linememo.ui.addeditmemo.AddEditMemoActivity
+import com.psplog.linememo.utils.database.local.Memo
 
-class MemoListAdapter(var context: Context, var list: List<Memo>) : RecyclerView.Adapter<MemoListAdapter.Holder>(),View.OnClickListener{
-    override fun onClick(v: View?) {
-        val intent = Intent(context, ContentActivity::class.java)
-        context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+class MemoListAdapter(var context: Context, var list: List<Memo>) : RecyclerView.Adapter<MemoListAdapter.Holder>() {
 
-    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_memo_list, parent,false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_memo_list, parent, false)
         return Holder(view)
     }
 
@@ -29,18 +25,22 @@ class MemoListAdapter(var context: Context, var list: List<Memo>) : RecyclerView
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.memoTitle.text=list[position].memoTitle
-        holder.memoContent.text=list[position].memoContent
+        holder.memoTitle.text = list[position].memoTitle
+        holder.memoContent.text = list[position].memoContent
         Glide.with(context).load(list[position].thumbnail).into(holder.memoThumbnail)
+        holder.itemView.setOnClickListener { startMemoContentActivity(position) }
+    }
 
-        holder.memoTitle.setOnClickListener(this)
-        holder.memoContent.setOnClickListener(this)
-        holder.memoThumbnail.setOnClickListener(this)
+    private fun startMemoContentActivity(position: Int) {
+        val intent = Intent(context, AddEditMemoActivity::class.java)
+        intent.putExtra("memo_id", list[position].memoId)
+        context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val memoTitle : TextView = itemView.findViewById(R.id.tv_memo_list_title)
-        val memoContent : TextView = itemView.findViewById(R.id.tv_memo_list_content)
-        val memoThumbnail : ImageView = itemView.findViewById(R.id.iv_memo_list_thumbnail)
+        val memoTitle: TextView = itemView.findViewById(R.id.tv_memo_list_title)
+        val memoContent: TextView = itemView.findViewById(R.id.tv_memo_list_content)
+        val memoThumbnail: ImageView = itemView.findViewById(R.id.iv_memo_list_thumbnail)
+
     }
 }

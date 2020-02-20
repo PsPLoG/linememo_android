@@ -4,69 +4,55 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.psplog.linememo.R
 import com.psplog.linememo.adapter.MemoListAdapter
-import com.psplog.linememo.data.MemoItem
-import com.psplog.linememo.ui.main.ContentActivity
-import com.psplog.linememo.utils.RxJavaScheduler
-import com.psplog.linememo.utils.database.Memo
+import com.psplog.linememo.ui.addeditmemo.AddEditMemoActivity
+import com.psplog.linememo.utils.AutoActivatedDisposable
+import com.psplog.linememo.utils.AutoClearedDisposable
 import com.psplog.linememo.utils.database.MemoDataBase
-import io.reactivex.Completable
-import io.reactivex.Scheduler
+import com.psplog.linememo.utils.database.local.Memo
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-
 import kotlinx.android.synthetic.main.activity_memo.*
 import kotlinx.android.synthetic.main.content_memo.*
 
-class MemoActivity : AppCompatActivity(), View.OnClickListener {
-    internal val disposables = CompositeDisposable()
-    internal val memoDAO by lazy { MemoDataBase.provideMemoDAO(this) }
+class MemoActivity : AppCompatActivity(), View.OnClickListener, MemoContract.View {
+    override lateinit var presenter: MemoContract.Presenter
+    private val disposables = AutoClearedDisposable(this)
+
     //TODO : 롱클릭 삭제기능
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_memo)
         setSupportActionBar(toolbar)
 
-
         fab.setOnClickListener(this)
 
-
-        var list = demoList()
+        var list = ArrayList<Memo>()
         rv_memo_list.adapter = MemoListAdapter(applicationContext, list)
         rv_memo_list.layoutManager = LinearLayoutManager(applicationContext)
-        adaptList()
-        disposables.add(RxJavaScheduler.runOnIoScheduler {
-            memoDAO.addMemo(Memo())
+
+        presenter = MemoPresenter(this, this)
+
+        lifecycle.addObserver(disposables)
+        lifecycle.addObserver(AutoActivatedDisposable(this) {
+            presenter.getMemoList()
         })
     }
 
     override fun onClick(v: View?) {
-        val intent = Intent(applicationContext, ContentActivity::class.java)
+        val intent = Intent(applicationContext, AddEditMemoActivity::class.java)
         startActivity(intent)
     }
 
-    private fun adaptList() = memoDAO.getMemo()
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({ item ->
-            with(rv_memo_list.adapter as MemoListAdapter) {
-                list = item
-                notifyDataSetChanged()
-            }
-        }) {
-            Log.d("Main", it.localizedMessage)
+    override fun showMemoList(item: List<Memo>) {
+        with(rv_memo_list.adapter as MemoListAdapter) {
+            list = item
+            notifyDataSetChanged()
         }
-
-    private fun demoList(): ArrayList<Memo> {
-        var list = ArrayList<Memo>()
-        list.add(Memo())
-        list.add(Memo())
-        list.add(Memo())
-        return list
     }
 
 }

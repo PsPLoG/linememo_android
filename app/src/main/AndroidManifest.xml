@@ -22,7 +22,7 @@
         </provider>
 
         <activity
-            android:name=".ui.main.ContentActivity"
+            android:name=".ui.addeditmemo.AddEditMemoActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.memo.MemoActivity"

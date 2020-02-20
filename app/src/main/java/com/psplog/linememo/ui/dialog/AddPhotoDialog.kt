@@ -32,7 +32,11 @@ class AddPhotoDialog : DialogFragment() {
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    private fun initView(view: View) : View {
+    fun setOnClickListener(listener: AddPhotoDialogListener){
+        this.listener=listener
+    }
+
+    private fun initView(view: View): View {
         view.findViewById<ImageView>(R.id.btn_addphoto_add_gallery).setOnClickListener {
             listener.onDialogGalleryClick(this)
             dismiss()
@@ -42,29 +46,16 @@ class AddPhotoDialog : DialogFragment() {
             dismiss()
         }
         view.findViewById<ImageView>(R.id.iv_addphoto_add_link).setOnClickListener {
-            if(view.findViewById<LinearLayout>(R.id.ll_addphoto_input).visibility==View.GONE) {
+            if (view.findViewById<LinearLayout>(R.id.ll_addphoto_input).visibility == View.GONE) {
                 view.findViewById<LinearLayout>(R.id.ll_addphoto_input).visibility = View.VISIBLE
             }
 
             val strUri = view.findViewById<EditText>(R.id.et_addphoto_link).text.toString()
             view.findViewById<Button>(R.id.btn_addphoto_add).setOnClickListener {
-                listener.onDialogLinkClick(this,strUri)
+                listener.onDialogLinkClick(this, strUri)
                 dismiss()
             }
         }
         return view
     }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            listener = context as AddPhotoDialogListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException(
-                (context.toString() +
-                        " must implement AddPhotoDialogListener")
-            )
-        }
-    }
-
 }
