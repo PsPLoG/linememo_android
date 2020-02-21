@@ -5,15 +5,17 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.psplog.linememo.R
+import com.psplog.linememo.database.local.Memo
 import com.psplog.linememo.ui.addeditmemo.AddEditMemoActivity
-import com.psplog.linememo.utils.database.local.Memo
 
-class MemoListAdapter(var context: Context, var list: List<Memo>) : RecyclerView.Adapter<MemoListAdapter.Holder>() {
+class MemoListAdapter(var context: Context, var list: MutableList<Memo>) :
+    RecyclerView.Adapter<MemoListAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_memo_list, parent, false)
@@ -25,10 +27,18 @@ class MemoListAdapter(var context: Context, var list: List<Memo>) : RecyclerView
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.memoTitle.text = list[position].memoTitle
-        holder.memoContent.text = list[position].memoContent
-        Glide.with(context).load(list[position].thumbnail).into(holder.memoThumbnail)
-        holder.itemView.setOnClickListener { startMemoContentActivity(position) }
+        with(holder) {
+            memoTitle.text = list[position].memoTitle
+            memoContent.text = list[position].memoContent
+            Glide.with(context)
+                .load(list[position].thumbnail)
+                .into(memoThumbnail)
+            itemView.setOnClickListener { startMemoContentActivity(position) }
+            memoCheckbox.isChecked=false
+            memoCheckbox.setOnCheckedChangeListener { compoundButton, b ->
+                list[position].isSelected = b
+            }
+        }
     }
 
     private fun startMemoContentActivity(position: Int) {
@@ -41,6 +51,6 @@ class MemoListAdapter(var context: Context, var list: List<Memo>) : RecyclerView
         val memoTitle: TextView = itemView.findViewById(R.id.tv_memo_list_title)
         val memoContent: TextView = itemView.findViewById(R.id.tv_memo_list_content)
         val memoThumbnail: ImageView = itemView.findViewById(R.id.iv_memo_list_thumbnail)
-
+        val memoCheckbox: CheckBox = itemView.findViewById(R.id.cb_memo_list_delete)
     }
 }

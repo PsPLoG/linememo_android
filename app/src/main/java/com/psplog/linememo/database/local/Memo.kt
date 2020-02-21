@@ -1,4 +1,4 @@
-package com.psplog.linememo.utils.database.local
+package com.psplog.linememo.database.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -10,4 +10,6 @@ class Memo(
         @ColumnInfo(name = "memo_content") val memoContent: String = "TEST_CONTENT",
         @ColumnInfo(name = "thumbnail") val thumbnail: String = "",
         @ColumnInfo(name = "memo_id") @PrimaryKey(autoGenerate = true) val memoId: Int = 0
-)
+){
+        var isSelected : Boolean=false
+}

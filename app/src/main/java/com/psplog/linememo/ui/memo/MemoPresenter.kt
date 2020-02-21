@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.psplog.linememo.utils.AutoActivatedDisposable
 import com.psplog.linememo.utils.AutoClearedDisposable
-import com.psplog.linememo.utils.database.MemoDataBase
+import com.psplog.linememo.database.MemoDataBase
+import com.psplog.linememo.database.local.Memo
+import com.psplog.linememo.utils.RxJavaScheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -31,5 +33,9 @@ class MemoPresenter(val context: AppCompatActivity,
                     }) {
                         Log.d("Main", it.localizedMessage)
                     }
-
+    override fun deleteMemo(memo: Memo) {
+        disposables.add(RxJavaScheduler.runOnIoScheduler {
+            memoDAO.deleteMemo(memo)
+        })
+    }
 }

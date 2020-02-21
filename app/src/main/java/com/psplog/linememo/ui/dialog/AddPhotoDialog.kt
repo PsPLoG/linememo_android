@@ -50,8 +50,8 @@ class AddPhotoDialog : DialogFragment() {
                 view.findViewById<LinearLayout>(R.id.ll_addphoto_input).visibility = View.VISIBLE
             }
 
-            val strUri = view.findViewById<EditText>(R.id.et_addphoto_link).text.toString()
             view.findViewById<Button>(R.id.btn_addphoto_add).setOnClickListener {
+                val strUri = view.findViewById<EditText>(R.id.et_addphoto_link).text.toString().trim()
                 listener.onDialogLinkClick(this, strUri)
                 dismiss()
             }

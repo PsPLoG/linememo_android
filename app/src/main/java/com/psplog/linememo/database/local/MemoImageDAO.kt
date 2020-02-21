@@ -1,4 +1,4 @@
-package com.psplog.linememo.utils.database.local
+package com.psplog.linememo.database.local
 
 import androidx.room.*
 import io.reactivex.Flowable
@@ -9,7 +9,7 @@ interface MemoImageDAO {
     fun getMemoImage(memoId: Int): Flowable<List<MemoImage>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addMemoImage(memoImage: MemoImage)
+    fun addMemoImage(memoImage: List<MemoImage>)
 
     @Delete
     fun deleteMemoImage(memoImage: MemoImage)

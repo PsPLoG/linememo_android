@@ -19,12 +19,13 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/tv_content_title"
+                android:id="@+id/et_content_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@null"
+                android:enabled="false"
                 android:hint="@string/memo_title"
                 android:inputType="text"
-                android:background="@null"
                 android:textColor="@color/blackText"
                 android:textSize="@dimen/memo_title_text_size" />
 
@@ -36,10 +37,11 @@
                 android:background="@color/blackText" />
 
             <EditText
-                android:id="@+id/tv_content_content"
+                android:id="@+id/et_content_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
+                android:enabled="false"
                 android:gravity="top"
                 android:hint="@string/memo_content"
                 android:minLines="6"
@@ -65,6 +67,7 @@
                 android:src="@drawable/baseline_add_circle_outline_black_48" />
 
             <TextView
+                android:id="@+id/tv_content_add_photo_tooltip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

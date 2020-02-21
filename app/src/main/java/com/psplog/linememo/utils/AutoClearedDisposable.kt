@@ -1,5 +1,6 @@
 package com.psplog.linememo.utils
 
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -20,6 +21,7 @@ class AutoClearedDisposable(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun cleanUp() {
+        Log.d("autoclear","ONSTOP")
         if (!alwaysClearOnStop && !lifecycleOwner.isFinishing) {
             return
         }
@@ -28,6 +30,7 @@ class AutoClearedDisposable(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun detachSelf() {
+        Log.d("autoclear","ONDESTROY")
         compositeDisposable.clear()
         lifecycleOwner.lifecycle.removeObserver(this)
     }

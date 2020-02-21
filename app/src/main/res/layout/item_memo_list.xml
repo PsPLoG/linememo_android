@@ -13,10 +13,14 @@
         app:cardElevation="2dp">
 
         <LinearLayout
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
-
+            <CheckBox
+                android:id="@+id/cb_memo_list_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -26,6 +30,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:maxLength="20"
                     android:id="@+id/tv_memo_list_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -34,6 +39,7 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:maxLength="40"
                     android:id="@+id/tv_memo_list_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -44,8 +50,8 @@
 
             <ImageView
                 android:id="@+id/iv_memo_list_thumbnail"
-                android:layout_width="80dp"
-                android:layout_height="80dp" />
+                android:layout_width="120dp"
+                android:layout_height="120dp" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

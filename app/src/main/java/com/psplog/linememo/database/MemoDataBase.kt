@@ -1,13 +1,13 @@
-package com.psplog.linememo.utils.database
+package com.psplog.linememo.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.psplog.linememo.utils.database.local.Memo
-import com.psplog.linememo.utils.database.local.MemoDAO
-import com.psplog.linememo.utils.database.local.MemoImage
-import com.psplog.linememo.utils.database.local.MemoImageDAO
+import com.psplog.linememo.database.local.Memo
+import com.psplog.linememo.database.local.MemoDAO
+import com.psplog.linememo.database.local.MemoImage
+import com.psplog.linememo.database.local.MemoImageDAO
 
 @Database(entities = arrayOf(
         Memo::class,

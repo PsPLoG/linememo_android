@@ -1,8 +1,6 @@
 
 @
 app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
-f
-6app/src/main/java/com/psplog/linememo/data/MemoItem.kt,a\9\a9290ef5de56437e938d4dcda08de84d0c619b5c
 P
  app/src/main/AndroidManifest.xml,8\c\8c55c3ccc257e5907959013f99656e4c8ec3903e
 p
@@ -11,11 +9,3 @@ i
 9app/src/main/java/com/psplog/linememo/utils/PhotoUtils.kt,a\9\a98e2daf5f92126b70e0b802c1feca55c8813b33
 q
 Aapp/src/main/java/com/psplog/linememo/ui/dialog/AddPhotoDialog.kt,3\1\31a72b43a95d7bd955d05d179b2935dfebf0b1de
-p
-@app/src/main/java/com/psplog/linememo/ui/main/ContentActivity.kt,5\d\5daa3efc2da5f89fe490284777d5e9b840f48e65
-o
-?app/src/main/java/com/psplog/linememo/utils/database/MemoDAO.kt,a\3\a319c149403418a270e67543511ce4265d2facdf
-t
-Dapp/src/main/java/com/psplog/linememo/utils/database/MemoDataBase.kt,5\2\5244fa627e433c75d911bb81af471b802186c622
-t
-Dapp/src/main/java/com/psplog/linememo/utils/database/MemoImageDAO.kt,1\f\1f180ff7f85f8b7c75ea05bd2e7db475245e4594

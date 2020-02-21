@@ -1,4 +1,4 @@
-package com.psplog.linememo.utils.database.local
+package com.psplog.linememo.database.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
