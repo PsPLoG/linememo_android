@@ -101,6 +101,7 @@ class AddEditMemoPresenter(
         if (!PhotoUtils.isHttpString(fileName)) {
             deleteFile.delete()
         }
+        memoImageQueue.remove(fileName)
         autoClearedDisposable.add(RxJavaScheduler.runOnIoScheduler {
             memoImageDAO.deleteMemoImage(fileName)
         })
