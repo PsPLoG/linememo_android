@@ -3,9 +3,11 @@ package com.psplog.linememo.ui.addeditmemo
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.MediaStore.Images.Media.CONTENT_TYPE
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -29,7 +31,6 @@ import java.io.File
 
 
 class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
-
     override lateinit var presenter: AddEditMemoContract.Presenter
     private lateinit var imageTemp: File
     private var isContentEdited = false
@@ -38,7 +39,6 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     private var menuView: Menu? = null
     private var currentMemoId: Int = 0
 
-    //TODO: url 첨부시구분
     /**
      *  Activity 종료시 저장여부 확인 리스너
      */
@@ -78,19 +78,22 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
             }
 
             override fun onDialogLinkClick(link: String) {
-                PhotoUtils.addPhotoView(window.decorView, link, deleteImageListener)
+                if (link.isNotBlank()) {
+                    if (PhotoUtils.isHttpString(link)) {
+                        presenter.addMemoImageInQueue("$link")
+                    } else {
+                        presenter.addMemoImageInQueue("http://$link")
+                    }
+                    isContentEdited=true
+                    PhotoUtils.addPhotoView(window.decorView, link, deleteImageListener)
+                }
             }
         }
 
     private var deleteImageListener = object : PhotoUtils.Companion.DeletableImageView.
     OnDeletableImageClick {
-        override fun OnDeletableImageClick(fileName: String) {
-            val deleteFile = File(filesDir, fileName)
-            if (deleteFile.delete()) {
-                presenter.deleteMemoImageInQueue(fileName)
-            } else {
-                Toast.makeText(applicationContext, "파일삭제 실패", Toast.LENGTH_SHORT).show()
-            }
+        override fun onDeletableImageClick(fileName: String) {
+            presenter.deleteMemoImageInQueue(fileName)
         }
     }
 
@@ -103,7 +106,6 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
         presenter = AddEditMemoPresenter(this, currentMemoId, this)
         presenter.start()
 
-        // Memo Edit Or Viewing
         if (!isNewMemo()) {
             setViewEditable(false)
             setCurrentEditingState(false)
@@ -120,9 +122,9 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
         }
 
         val textChangeListener = object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
+            override fun afterTextChanged(p0: Editable?) = Unit
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 isContentEdited = true
@@ -140,18 +142,18 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
             requestCode == SELECT_CAMERA -> {
                 PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
                 val fileName = imageTemp.toString().split("/").last()
-                Log.d(TAG_ADD_EDIT, "카메라$fileName")
                 presenter.addMemoImageInQueue(fileName)
+                isContentEdited=true
             }
 
             requestCode == SELECT_GALLERY && null != data -> {
                 val uri = data.data ?: return
                 val fileName = PhotoUtils.createUUID() + ".png"
-                Log.d(TAG_ADD_EDIT, "갤러리$uri")
                 imageTemp = File(filesDir, fileName)
                 PhotoUtils.copyImageUriToFile(applicationContext, uri, imageTemp)
                 PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
                 presenter.addMemoImageInQueue(fileName)
+                isContentEdited=true
             }
         }
     }
@@ -177,11 +179,13 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG_ADD_EDIT,"${item.itemId}  ${R.id.home}")
+        Log.d(TAG_ADD_EDIT, "${item.itemId}  ${R.id.home} ${android.R.id.home}")
         when (item.itemId) {
             R.id.menu_addedit_save -> {
-                presenter.addMemo(getCurrentMemo())
-                setCurrentEditingState(false)
+                if (isContentEdited) {
+                    presenter.addMemo(getCurrentMemo())
+                    setCurrentEditingState(false)
+                }
             }
 
             R.id.menu_addedit_delete -> {
@@ -199,7 +203,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                 }
             }
 
-            R.id.home -> {
+            android.R.id.home -> {
                 onBackPressed()
             }
         }
@@ -225,7 +229,6 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
         }
     }
 
-
     private fun setViewEditable(isEnabled: Boolean) {
         et_content_title.isEnabled = isEnabled
         et_content_content.isEnabled = isEnabled
@@ -235,7 +238,8 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
         Memo(
             et_content_title.text.toString(),
             et_content_content.text.toString(),
-            "", currentMemoId
+            "",
+            currentMemoId
         )
 
     override fun showMemoContent(memoContent: Memo) {
@@ -245,51 +249,73 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     }
 
     override fun showMemoContentImage(memoContentImageList: List<MemoImage>) {
-        for (link in memoContentImageList) {
-            imageTemp = File(filesDir, link.memoUri)
-            PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
+        for (item in memoContentImageList) {
+            if (PhotoUtils.isHttpString(item.memoUri)) {
+                PhotoUtils.addPhotoView(window.decorView, item.memoUri, deleteImageListener)
+            } else {
+                imageTemp = File(filesDir, item.memoUri)
+                PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
+            }
         }
     }
 
     override fun showAddPhotoDialog() {
-        var dialog = AddPhotoDialog()
+        val dialog = AddPhotoDialog()
         dialog.setOnClickListener(addPhotoDialogListener)
         dialog.show(supportFragmentManager, "AddPhotoDialog")
     }
 
     private fun showSavingDialog() {
-        var dialog = SavingDialog()
+        val dialog = SavingDialog()
         dialog.setOnClickListener(savingDialogListener)
         dialog.show(supportFragmentManager, "SavingDialog")
     }
 
-    // TODO if 절 이름 바꿔주기
+    private fun showSettingActivity() {
+        val appDetail = Intent(
+            ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:$packageName")
+        )
+        appDetail.addCategory(Intent.CATEGORY_DEFAULT)
+        appDetail.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(appDetail)
+    }
+
+    private var firstPermissionRequest = true
     private fun checkPermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(
+        if (hasReadStoragePermission()) {
+            return true
+        }
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
+            )
         ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            ) {
-                Toast.makeText(
-                    applicationContext,
-                    R.string.permission_denied_msg,
-                    Toast.LENGTH_SHORT
-                ).show()
-                return false
-            } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                    REQUEST_READ_STORAGE
-                )
+            requestPermission()
+        } else {
+            if (firstPermissionRequest)
+                requestPermission()
+            else {
+                showSettingActivity()
             }
         }
-        return true
+        firstPermissionRequest = false
+        return false
+    }
+
+    private fun hasReadStoragePermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            REQUEST_READ_STORAGE
+        )
     }
 
     override fun onRequestPermissionsResult(
@@ -302,25 +328,26 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     showAddPhotoDialog()
                 } else {
-                    Toast.makeText(
-                        applicationContext,
-                        R.string.permission_denied_msg,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    toastMessage(R.string.permission_denied_msg)
                 }
                 return
             }
         }
     }
 
+    private fun toastMessage(resId: Int) {
+        Toast.makeText(
+            applicationContext,
+            resId,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
     companion object {
         private const val TAG_ADD_EDIT = "ADD_EDIT_ACT"
-
         private const val SELECT_CAMERA = 0
         private const val SELECT_GALLERY = 1
-
         private const val REQUEST_READ_STORAGE = 2
-
         private const val DEFAULT_MEMO_ID = 0
     }
 }

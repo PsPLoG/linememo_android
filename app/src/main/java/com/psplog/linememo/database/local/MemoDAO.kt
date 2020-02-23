@@ -13,9 +13,10 @@ interface MemoDAO {
         memo_uri AS thumbnail, 
         memo.memo_id 
         FROM memo 
-        LEFT JOIN memo_image 
-        ON memo.memo_id = memo_image.memo_id 
-        GROUP BY memo.memo_id
+        LEFT JOIN  (SELECT min(memo_image_id)as memo_image_id, memo_uri ,memo_id
+                    FROM memo_image
+                    group by memo_id) as memo_image
+        ON memo.memo_id = memo_image.memo_id
         """
     )
     fun getMemo(): Flowable<MutableList<Memo>>

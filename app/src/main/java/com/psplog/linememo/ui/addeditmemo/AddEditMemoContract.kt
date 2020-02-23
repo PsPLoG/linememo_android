@@ -4,7 +4,6 @@ import com.psplog.linememo.BasePresenter
 import com.psplog.linememo.BaseView
 import com.psplog.linememo.database.local.Memo
 import com.psplog.linememo.database.local.MemoImage
-import io.reactivex.disposables.Disposable
 
 interface AddEditMemoContract {
 

@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.psplog.linememo.R
 import com.psplog.linememo.database.local.Memo
 import com.psplog.linememo.ui.addeditmemo.AddEditMemoActivity
+import com.psplog.linememo.utils.PhotoUtils
 import java.io.File
 
 class MemoListAdapter(var context: Context, val list: MutableList<Memo>) :
@@ -50,13 +51,21 @@ class MemoListAdapter(var context: Context, val list: MutableList<Memo>) :
             }
             memoThumbnail.setImageResource(0)
             if (isThumbnailNullOrEmpty(position)) {
-                val imageTemp = File(context.filesDir, list[position].thumbnail)
-                Glide.with(context)
-                    .load(imageTemp)
-                    .centerCrop()
-                    .into(memoThumbnail)
+                with(list[position].thumbnail) {
+                    if (PhotoUtils.isHttpString(this!!)) {
+                        Glide.with(context)
+                            .load(this)
+                            .centerCrop()
+                            .into(memoThumbnail)
+                    } else {
+                        val imageTemp = File(context.filesDir, this)
+                        Glide.with(context)
+                            .load(imageTemp)
+                            .centerCrop()
+                            .into(memoThumbnail)
+                    }
+                }
             }
-
             memoCheckbox.isChecked = false
         }
     }

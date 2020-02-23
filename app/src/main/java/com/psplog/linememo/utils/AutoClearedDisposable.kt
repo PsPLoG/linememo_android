@@ -10,7 +10,7 @@ import io.reactivex.disposables.Disposable
 
 class AutoClearedDisposable(
     private val lifecycleOwner: AppCompatActivity,
-    private val alwaysClearOnStop: Boolean = true,
+    private val alwaysClearOnStop: Boolean = false,
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 ) : LifecycleObserver {
 
@@ -26,16 +26,13 @@ class AutoClearedDisposable(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun cleanUp() {
-        Log.d("autoclear", "ONSTOP")
-        if (!alwaysClearOnStop && !lifecycleOwner.isFinishing) {
-            return
+        if (alwaysClearOnStop) {
+            compositeDisposable.clear()
         }
-        compositeDisposable.clear()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun detachSelf() {
-        Log.d("autoclear", "ONDESTROY")
         compositeDisposable.clear()
         lifecycleOwner.lifecycle.removeObserver(this)
     }

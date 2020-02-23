@@ -16,11 +16,6 @@ import kotlinx.android.synthetic.main.content_memo.*
 class MemoActivity : AppCompatActivity(), View.OnClickListener, MemoContract.View {
     override lateinit var presenter: MemoContract.Presenter
 
-    override fun onResume() {
-        super.onResume()
-        presenter.getMemoList()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_memo)
@@ -51,17 +46,17 @@ class MemoActivity : AppCompatActivity(), View.OnClickListener, MemoContract.Vie
         return true
     }
 
+    override fun onClick(v: View?) {
+        val intent = Intent(applicationContext, AddEditMemoActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun removeCheckedMemo() {
         with(rv_memo_list.adapter as MemoListAdapter) {
             list.filter { it.isSelected }
                 .forEach(presenter::deleteMemo)
             notifyDataSetChanged()
         }
-    }
-
-    override fun onClick(v: View?) {
-        val intent = Intent(applicationContext, AddEditMemoActivity::class.java)
-        startActivity(intent)
     }
 
     override fun showMemoList(item: MutableList<Memo>) {

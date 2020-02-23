@@ -24,6 +24,7 @@ import java.util.*
 class PhotoUtils {
 
     companion object {
+
         private var deletableImageViewList = ArrayList<DeletableImageView>()
 
         private fun getPath(context: Context, uri: Uri): String {
@@ -35,8 +36,10 @@ class PhotoUtils {
             return cursor.getString(index)
         }
 
+        fun isHttpString(link: String) = link.toLowerCase().contains("http")
+
         fun copyImageUriToFile(context: Context, srcUri: Uri, destFile: File) {
-            var srcFile = File(getPath(context, srcUri))
+            val srcFile = File(getPath(context, srcUri))
 
             srcFile.inputStream().use { fis ->
                 destFile.outputStream().use { fos ->
@@ -52,7 +55,7 @@ class PhotoUtils {
         }
 
         fun addPhotoView(view: View, uri: Any, listener: DeletableImageView.OnDeletableImageClick) {
-            var deletableImageView =
+            val deletableImageView =
                 DeletableImageView(view, uri.toString().split("/").last(), listener)
             deletableImageViewList.add(deletableImageView)
 
@@ -100,7 +103,7 @@ class PhotoUtils {
 
         class DeletableImageView(
             view: View,
-            var fileName: String,
+            private val fileName: String,
             listener: OnDeletableImageClick
         ) {
             var deleteView = FrameLayout(view.context)
@@ -108,14 +111,14 @@ class PhotoUtils {
             var deleteButton = ImageView(view.context)
 
             interface OnDeletableImageClick {
-                fun OnDeletableImageClick(fileName: String)
+                fun onDeletableImageClick(fileName: String)
             }
 
             init {
                 deleteButton.tag = "deleteButtonView"
                 deleteButton.setImageResource(R.drawable.twotone_clear_black_36)
                 deleteButton.setOnClickListener {
-                    listener.OnDeletableImageClick(fileName)
+                    listener.onDeletableImageClick(fileName)
                     deletableImageViewList.remove(this)
                     deleteView.removeAllViews()
                 }

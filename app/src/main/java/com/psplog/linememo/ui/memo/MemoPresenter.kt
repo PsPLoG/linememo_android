@@ -1,13 +1,12 @@
 package com.psplog.linememo.ui.memo
 
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.psplog.linememo.R
 import com.psplog.linememo.database.MemoDataBase
 import com.psplog.linememo.database.local.Memo
 import com.psplog.linememo.database.local.MemoImage
 import com.psplog.linememo.utils.AutoClearedDisposable
+import com.psplog.linememo.utils.PhotoUtils
 import com.psplog.linememo.utils.RxJavaScheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -41,33 +40,35 @@ class MemoPresenter(
         })
     }
 
-    override fun deleteMemoImage(memoId: Int): Disposable =
+    private fun deleteMemoImage(memoId: Int): Disposable =
         memoImageDAO.getMemoImage(memoId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(this::deleteMemoImageFile, this::throwLog)
 
     private fun deleteMemoImageFile(item: List<MemoImage>) {
-        for (image in item) {
-            val deleteFile = File(context.filesDir, image.memoUri)
+        for (item in item) {
+            if (PhotoUtils.isHttpString(item.memoUri))
+                continue
+
+            val deleteFile = File(context.filesDir, item.memoUri)
             if (isNotDelete(deleteFile)) {
-                toastMessage(R.string.memo_toast_file_delete_fail)
+                logMessage("fileNotFindException:${deleteFile}")
             }
+            autoClearedDisposable.add(RxJavaScheduler.runOnIoScheduler {
+                memoImageDAO.deleteMemoImage(item.memoUri)
+            })
         }
     }
 
     private fun isNotDelete(deleteFile: File) = !deleteFile.delete()
 
-    private fun toastMessage(resId: Int) {
-        Toast.makeText(
-            context,
-            context.resources.getText(resId),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
     private fun throwLog(it: Throwable) {
         Log.d(TAG_MEMO_PRESENTER, it.localizedMessage)
+    }
+
+    private fun logMessage(msg: String) {
+        Log.d(TAG_MEMO_PRESENTER, msg)
     }
 
     companion object {

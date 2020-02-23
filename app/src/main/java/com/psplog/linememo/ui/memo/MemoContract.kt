@@ -17,8 +17,6 @@ interface MemoContract {
 
         fun getMemoList(): Disposable
 
-        fun deleteMemoImage(memoId: Int): Disposable
-
         fun deleteMemo(memo: Memo)
 
     }

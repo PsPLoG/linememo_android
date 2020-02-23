@@ -6,7 +6,6 @@
     <string name="memo_content">내용</string>
     <string name="memo_title">제목</string>
     <string name="memo_nocontent">이미지</string>
-    <string name="memo_toast_file_delete_fail">파일삭제실패</string>
     <!-- AddEditActivity  -->
     <string name="addphoto_link_tooltip">추가할 이미지 링크를 입력해주세요</string>
     <string name="addphoto_add">추가</string>
