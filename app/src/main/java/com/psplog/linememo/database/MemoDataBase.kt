@@ -13,7 +13,7 @@ import com.psplog.linememo.database.local.MemoImageDAO
     entities = arrayOf(
         Memo::class,
         MemoImage::class
-    ), version = 3
+    ), version = 1
 )
 abstract class MemoDataBase : RoomDatabase() {
     abstract fun memoDAO(): MemoDAO

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LineMemo</string>
+    <string name="app_name">라인메모장</string>
     <string name="title_activity_memo">MemoActivity</string>
     <string name="title_activity_content">ContentActivity</string>
     <!-- MemoActivity  -->
