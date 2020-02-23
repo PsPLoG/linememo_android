@@ -84,7 +84,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                     } else {
                         presenter.addMemoImageInQueue("http://$link")
                     }
-                    isContentEdited=true
+                    isContentEdited = true
                     PhotoUtils.addPhotoView(window.decorView, link, deleteImageListener)
                 }
             }
@@ -143,7 +143,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                 PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
                 val fileName = imageTemp.toString().split("/").last()
                 presenter.addMemoImageInQueue(fileName)
-                isContentEdited=true
+                isContentEdited = true
             }
 
             requestCode == SELECT_GALLERY && null != data -> {
@@ -153,7 +153,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                 PhotoUtils.copyImageUriToFile(applicationContext, uri, imageTemp)
                 PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
                 presenter.addMemoImageInQueue(fileName)
-                isContentEdited=true
+                isContentEdited = true
             }
         }
     }
