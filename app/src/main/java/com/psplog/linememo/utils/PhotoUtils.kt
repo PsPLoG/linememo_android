@@ -24,7 +24,9 @@ import java.util.*
 class PhotoUtils {
 
     companion object {
-        private fun getPath(context: Context, uri: Uri): String { //39. 갤러리에서 인텐트로 받은 이미지의 주소(uri)는 한번에 안받아지므로 따로 정의해주는 매쏘드
+        private var deletableImageViewList = ArrayList<DeletableImageView>()
+
+        private fun getPath(context: Context, uri: Uri): String {
             val projection = arrayOf(MediaStore.Images.Media.DATA)
             val cursorLoader = CursorLoader(context, uri, projection, null, null, null)
             val cursor = cursorLoader.loadInBackground() ?: return "null"
@@ -43,17 +45,25 @@ class PhotoUtils {
             }
         }
 
-        fun addPhotoView(view: View, uri: Any) {
-            var deletableImageView = DeletableImageView(view)
+        fun setVisibilityDeleteButton(visibility: Int) {
+            for (item in deletableImageViewList) {
+                item.deleteButton.visibility = visibility
+            }
+        }
 
-            val errorListener =object : RequestListener<Drawable>{
+        fun addPhotoView(view: View, uri: Any, listener: DeletableImageView.OnDeletableImageClick) {
+            var deletableImageView =
+                DeletableImageView(view, uri.toString().split("/").last(), listener)
+            deletableImageViewList.add(deletableImageView)
+
+            val errorListener = object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
                     model: Any?,
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    Toast.makeText(view.context,"잘못된 URL 입니다.",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(view.context, "잘못된 URL 입니다.", Toast.LENGTH_SHORT).show()
                     return false
                 }
 
@@ -69,11 +79,18 @@ class PhotoUtils {
             }
 
             when (uri) {
-                is Uri -> Glide.with(view.context).load(uri).error(R.drawable.load_fail_image).addListener(errorListener).into(deletableImageView.imageView)
-                is String -> Glide.with(view.context).load(uri).error(R.drawable.load_fail_image).addListener(errorListener).into(deletableImageView.imageView)
-                is File -> Glide.with(view.context).load(uri).error(R.drawable.load_fail_image).addListener(errorListener).into(deletableImageView.imageView)
+                is Uri -> Glide.with(view.context).load(uri).error(R.drawable.load_fail_image).addListener(
+                    errorListener
+                ).into(deletableImageView.imageView)
+                is String -> Glide.with(view.context).load(uri).error(R.drawable.load_fail_image).addListener(
+                    errorListener
+                ).into(deletableImageView.imageView)
+                is File -> Glide.with(view.context).load(uri).error(R.drawable.load_fail_image).addListener(
+                    errorListener
+                ).into(deletableImageView.imageView)
             }
-            view.findViewById<LinearLayout>(R.id.ll_content_image_list).addView(deletableImageView.deleteView)
+            view.findViewById<LinearLayout>(R.id.ll_content_image_list)
+                .addView(deletableImageView.deleteView)
         }
 
         fun createUUID(): String {
@@ -81,22 +98,33 @@ class PhotoUtils {
         }
 
 
-        class DeletableImageView(view: View) {
+        class DeletableImageView(
+            view: View,
+            var fileName: String,
+            listener: OnDeletableImageClick
+        ) {
             var deleteView = FrameLayout(view.context)
             var imageView = ImageView(view.context)
             var deleteButton = ImageView(view.context)
-            init{
 
+            interface OnDeletableImageClick {
+                fun OnDeletableImageClick(fileName: String)
+            }
+
+            init {
+                deleteButton.tag = "deleteButtonView"
                 deleteButton.setImageResource(R.drawable.twotone_clear_black_36)
-                deleteButton.setOnClickListener{
+                deleteButton.setOnClickListener {
+                    listener.OnDeletableImageClick(fileName)
+                    deletableImageViewList.remove(this)
                     deleteView.removeAllViews()
                 }
 
-                deleteView.layoutParams=ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
+                deleteView.layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                imageView.layoutParams=ViewGroup.LayoutParams(
+                imageView.layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )

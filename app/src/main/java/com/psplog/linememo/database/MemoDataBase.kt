@@ -9,16 +9,20 @@ import com.psplog.linememo.database.local.MemoDAO
 import com.psplog.linememo.database.local.MemoImage
 import com.psplog.linememo.database.local.MemoImageDAO
 
-@Database(entities = arrayOf(
+@Database(
+    entities = arrayOf(
         Memo::class,
-        MemoImage::class), version = 3)
+        MemoImage::class
+    ), version = 3
+)
 abstract class MemoDataBase : RoomDatabase() {
     abstract fun memoDAO(): MemoDAO
     abstract fun memoImageDAO(): MemoImageDAO
 
     companion object {
         fun provideMemoDAO(context: Context): MemoDAO = getInstance(context).memoDAO()
-        fun provideMemoImageDAO(context: Context): MemoImageDAO = getInstance(context).memoImageDAO()
+        fun provideMemoImageDAO(context: Context): MemoImageDAO =
+            getInstance(context).memoImageDAO()
 
         private var INSTANCE: MemoDataBase? = null
 
@@ -27,9 +31,11 @@ abstract class MemoDataBase : RoomDatabase() {
         private fun getInstance(context: Context): MemoDataBase {
             synchronized(lock) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context,
-                            MemoDataBase::class.java, "Memo.db")
-                            .build()
+                    INSTANCE = Room.databaseBuilder(
+                        context,
+                        MemoDataBase::class.java, "Memo.db"
+                    )
+                        .build()
                 }
                 return INSTANCE!!
             }

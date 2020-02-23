@@ -1,7 +1,6 @@
 package com.psplog.linememo.ui.dialog
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -17,9 +16,9 @@ class AddPhotoDialog : DialogFragment() {
     lateinit var listener: AddPhotoDialogListener
 
     interface AddPhotoDialogListener {
-        fun onDialogCameraClick(dialog: DialogFragment)
-        fun onDialogGalleryClick(dialog: DialogFragment)
-        fun onDialogLinkClick(dialog: DialogFragment, link: String)
+        fun onDialogCameraClick()
+        fun onDialogGalleryClick()
+        fun onDialogLinkClick(link: String)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -32,27 +31,28 @@ class AddPhotoDialog : DialogFragment() {
         } ?: throw IllegalStateException("Activity cannot be null")
     }
 
-    fun setOnClickListener(listener: AddPhotoDialogListener){
-        this.listener=listener
+    fun setOnClickListener(listener: AddPhotoDialogListener) {
+        this.listener = listener
     }
 
     private fun initView(view: View): View {
         view.findViewById<ImageView>(R.id.btn_addphoto_add_gallery).setOnClickListener {
-            listener.onDialogGalleryClick(this)
+            listener.onDialogGalleryClick()
             dismiss()
         }
         view.findViewById<ImageView>(R.id.btn_addphoto_add_camera).setOnClickListener {
-            listener.onDialogCameraClick(this)
+            listener.onDialogCameraClick()
             dismiss()
         }
         view.findViewById<ImageView>(R.id.iv_addphoto_add_link).setOnClickListener {
-            if (view.findViewById<LinearLayout>(R.id.ll_addphoto_input).visibility == View.GONE) {
+            if (View.GONE == view.findViewById<LinearLayout>(R.id.ll_addphoto_input).visibility) {
                 view.findViewById<LinearLayout>(R.id.ll_addphoto_input).visibility = View.VISIBLE
             }
 
             view.findViewById<Button>(R.id.btn_addphoto_add).setOnClickListener {
-                val strUri = view.findViewById<EditText>(R.id.et_addphoto_link).text.toString().trim()
-                listener.onDialogLinkClick(this, strUri)
+                val strUri =
+                    view.findViewById<EditText>(R.id.et_addphoto_link).text.toString().trim()
+                listener.onDialogLinkClick(strUri)
                 dismiss()
             }
         }

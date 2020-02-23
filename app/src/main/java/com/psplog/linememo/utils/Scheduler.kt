@@ -7,8 +7,8 @@ import io.reactivex.schedulers.Schedulers
 class RxJavaScheduler {
     companion object {
         fun runOnIoScheduler(func: () -> Unit): Disposable =
-                Completable.fromCallable(func)
-                        .subscribeOn(Schedulers.io())
-                        .subscribe()
+            Completable.fromCallable(func)
+                .subscribeOn(Schedulers.io())
+                .subscribe()
     }
 }

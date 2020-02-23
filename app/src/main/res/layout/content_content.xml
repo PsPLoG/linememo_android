@@ -60,20 +60,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <ImageView
-                android:id="@+id/iv_content_add_photo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_add_circle_outline_black_48" />
-
-            <TextView
-                android:id="@+id/tv_content_add_photo_tooltip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="@string/memo_add_image_tip" />
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

@@ -9,9 +9,9 @@
     tools:showIn="@layout/activity_memo">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:background="@color/white"
         android:id="@+id/rv_memo_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

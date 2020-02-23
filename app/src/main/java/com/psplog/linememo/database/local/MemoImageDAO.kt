@@ -13,4 +13,10 @@ interface MemoImageDAO {
 
     @Delete
     fun deleteMemoImage(memoImage: MemoImage)
+
+    @Query("DELETE from memo_image where memo_uri=:fileName")
+    fun deleteMemoImage(fileName: String)
+
+    @Query("DELETE from memo_image where memo_id=:memoId")
+    fun deleteMemoImage(memoId: Int)
 }

@@ -1,7 +1,6 @@
 package com.psplog.linememo.ui.dialog
 
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -21,17 +20,17 @@ class SavingDialog : DialogFragment() {
             // Use the Builder class for convenient dialog construction
             val builder = AlertDialog.Builder(it)
             builder.setMessage(R.string.saving)
-                    .setPositiveButton(R.string.save,
-                            DialogInterface.OnClickListener { dialog, id ->
-                                listener.onDialogSaveClick()
-                            })
-                    .setNegativeButton(R.string.cancel,
-                            DialogInterface.OnClickListener { dialog, id ->
-                            })
-                    .setNeutralButton(R.string.exit,
-                            DialogInterface.OnClickListener { dialog, id ->
-                                listener.onDialogExit()
-                            })
+                .setPositiveButton(R.string.save,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        listener.onDialogSaveClick()
+                    })
+                .setNegativeButton(R.string.cancel,
+                    DialogInterface.OnClickListener { dialog, id ->
+                    })
+                .setNeutralButton(R.string.exit,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        listener.onDialogExit()
+                    })
             // Create the AlertDialog object and return it
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")

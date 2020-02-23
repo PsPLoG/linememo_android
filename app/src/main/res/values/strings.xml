@@ -2,19 +2,25 @@
     <string name="app_name">LineMemo</string>
     <string name="title_activity_memo">MemoActivity</string>
     <string name="title_activity_content">ContentActivity</string>
+    <!-- MemoActivity  -->
     <string name="memo_content">내용</string>
     <string name="memo_title">제목</string>
-    <string name="memo_add_image_tip">이미지를 추가하려면 위 버튼을 눌러주세요</string>
+    <string name="memo_nocontent">이미지</string>
+    <string name="memo_toast_file_delete_fail">파일삭제실패</string>
+    <!-- AddEditActivity  -->
     <string name="addphoto_link_tooltip">추가할 이미지 링크를 입력해주세요</string>
     <string name="addphoto_add">추가</string>
-
-
     <string name="permission_denied_msg">사진을 첨부하려면 저장권한이 필요합니다.</string>
-    <string name="addedit_save">저장</string>
-    <string name="addedit_edit">수정</string>
-    <string name="addedit_delete">삭제</string>
+    <string name="menu_addedit_save">저장</string>
+    <string name="menu_addedit_edit">수정</string>
+    <string name="menu_addedit_delete">삭제</string>
+    <string name="menu_addedit_photo">사진첨부</string>
+    <!-- Dailog -->
+    <string name="delete_tooltip">삭제하시겠습니까?</string>
     <string name="saving">저장하시겠습니까?</string>
+    <string name="delete">삭제</string>
     <string name="save">저장</string>
     <string name="cancel">취소</string>
     <string name="exit">종료</string>
+
 </resources>

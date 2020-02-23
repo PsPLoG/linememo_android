@@ -1,13 +1,12 @@
 package com.psplog.linememo.ui.addeditmemo
 
-import android.content.Intent
 import com.psplog.linememo.BasePresenter
 import com.psplog.linememo.BaseView
 import com.psplog.linememo.database.local.Memo
 import com.psplog.linememo.database.local.MemoImage
 import io.reactivex.disposables.Disposable
 
-interface AddEditContract {
+interface AddEditMemoContract {
 
     interface View : BaseView<Presenter> {
 
@@ -21,19 +20,15 @@ interface AddEditContract {
 
     interface Presenter : BasePresenter {
 
-        fun addPhoto(uri: String)
-
-        fun clearPhotoQueqe()
-
         fun addMemo(memo: Memo)
 
-        fun loadMemo(): Disposable?
-
-        fun getMemoImage(): Disposable?
-
-        fun deleteMemoImage()
+        fun addMemoImageInQueue(uri: String)
 
         fun deleteMemo(memo: Memo)
+
+        fun deleteMemoImageInQueue(fileName: String)
+
+        fun pushImageQueue()
 
     }
 }

@@ -8,36 +8,35 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.psplog.linememo.R
-import com.psplog.linememo.adapter.MemoListAdapter
 import com.psplog.linememo.database.local.Memo
 import com.psplog.linememo.ui.addeditmemo.AddEditMemoActivity
-import com.psplog.linememo.utils.AutoActivatedDisposable
-import com.psplog.linememo.utils.AutoClearedDisposable
 import kotlinx.android.synthetic.main.activity_memo.*
 import kotlinx.android.synthetic.main.content_memo.*
 
 class MemoActivity : AppCompatActivity(), View.OnClickListener, MemoContract.View {
     override lateinit var presenter: MemoContract.Presenter
-    private val disposables = AutoClearedDisposable(this)
 
-    //TODO : 롱클릭 삭제기능
+    override fun onResume() {
+        super.onResume()
+        presenter.getMemoList()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_memo)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener(this)
-
-        var list = ArrayList<Memo>()
-        rv_memo_list.adapter = MemoListAdapter(applicationContext, list)
-        rv_memo_list.layoutManager = LinearLayoutManager(applicationContext)
+        initView()
 
         presenter = MemoPresenter(this, this)
+        presenter.start()
+    }
 
-        lifecycle.addObserver(disposables)
-        lifecycle.addObserver(AutoActivatedDisposable(this) {
-            presenter.getMemoList()
-        })
+    private fun initView() {
+        fab.setOnClickListener(this)
+
+        val list = ArrayList<Memo>()
+        rv_memo_list.adapter = MemoListAdapter(applicationContext, list)
+        rv_memo_list.layoutManager = LinearLayoutManager(applicationContext)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -52,6 +51,14 @@ class MemoActivity : AppCompatActivity(), View.OnClickListener, MemoContract.Vie
         return true
     }
 
+    private fun removeCheckedMemo() {
+        with(rv_memo_list.adapter as MemoListAdapter) {
+            list.filter { it.isSelected }
+                .forEach(presenter::deleteMemo)
+            notifyDataSetChanged()
+        }
+    }
+
     override fun onClick(v: View?) {
         val intent = Intent(applicationContext, AddEditMemoActivity::class.java)
         startActivity(intent)
@@ -59,20 +66,9 @@ class MemoActivity : AppCompatActivity(), View.OnClickListener, MemoContract.Vie
 
     override fun showMemoList(item: MutableList<Memo>) {
         with(rv_memo_list.adapter as MemoListAdapter) {
-            list = item
-            notifyDataSetChanged()
+            setItems(item)
         }
     }
 
-    private fun removeCheckedMemo() {
-        with(rv_memo_list.adapter as MemoListAdapter) {
-            list.filter { it.isSelected }
-                .forEach{
-                    presenter.deleteMemo(it)
-                    list.remove(it)
-                }
-            notifyDataSetChanged()
-        }
-    }
 
 }

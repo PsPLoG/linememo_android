@@ -16,6 +16,10 @@ interface MemoContract {
     interface Presenter : BasePresenter {
 
         fun getMemoList(): Disposable
+
+        fun deleteMemoImage(memoId: Int): Disposable
+
         fun deleteMemo(memo: Memo)
+
     }
 }
