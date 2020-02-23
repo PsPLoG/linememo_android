@@ -10,7 +10,6 @@ import android.provider.MediaStore.Images.Media.CONTENT_TYPE
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -25,8 +24,8 @@ import com.psplog.linememo.database.local.MemoImage
 import com.psplog.linememo.ui.dialog.AddPhotoDialog
 import com.psplog.linememo.ui.dialog.SavingDialog
 import com.psplog.linememo.utils.PhotoUtils
-import kotlinx.android.synthetic.main.activity_content.*
-import kotlinx.android.synthetic.main.content_content.*
+import kotlinx.android.synthetic.main.activity_memo_add_edit.*
+import kotlinx.android.synthetic.main.content_memo_add_edit.*
 import java.io.File
 
 
@@ -79,27 +78,31 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
 
             override fun onDialogLinkClick(link: String) {
                 if (link.isNotBlank()) {
-                    if (PhotoUtils.isHttpString(link)) {
-                        presenter.addMemoImageInQueue("$link")
-                    } else {
-                        presenter.addMemoImageInQueue("http://$link")
+                    var newLink = link
+                    if (!PhotoUtils.isHttpString(link)) {
+                        newLink = "http://$link"
                     }
                     isContentEdited = true
-                    PhotoUtils.addPhotoView(window.decorView, link, deleteImageListener)
+                    presenter.addMemoImageInQueue(newLink)
+                    PhotoUtils.addPhotoView(window.decorView, newLink, deleteImageListener)
                 }
             }
         }
 
+    /**
+     *  이미지 삭제버튼 클릭 리스너
+     */
     private var deleteImageListener = object : PhotoUtils.Companion.DeletableImageView.
     OnDeletableImageClick {
         override fun onDeletableImageClick(fileName: String) {
             presenter.deleteMemoImageInQueue(fileName)
+            isContentEdited = true
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_content)
+        setContentView(R.layout.activity_memo_add_edit)
         initView()
 
         currentMemoId = intent.getIntExtra("memo_id", DEFAULT_MEMO_ID)
@@ -179,7 +182,6 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG_ADD_EDIT, "${item.itemId}  ${R.id.home} ${android.R.id.home}")
         when (item.itemId) {
             R.id.menu_addedit_save -> {
                 if (isContentEdited) {
@@ -249,6 +251,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     }
 
     override fun showMemoContentImage(memoContentImageList: List<MemoImage>) {
+        PhotoUtils.clearPhotoView(window.decorView)
         for (item in memoContentImageList) {
             if (PhotoUtils.isHttpString(item.memoUri)) {
                 PhotoUtils.addPhotoView(window.decorView, item.memoUri, deleteImageListener)

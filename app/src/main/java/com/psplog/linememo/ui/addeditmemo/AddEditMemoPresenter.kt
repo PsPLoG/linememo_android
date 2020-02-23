@@ -98,13 +98,12 @@ class AddEditMemoPresenter(
 
     override fun deleteMemoImageInQueue(fileName: String) {
         val deleteFile = File(context.filesDir, fileName)
-        if (deleteFile.delete()) {
-            if (!memoImageQueue.remove(fileName)) {
-                autoClearedDisposable.add(RxJavaScheduler.runOnIoScheduler {
-                    memoImageDAO.deleteMemoImage(fileName)
-                })
-            }
+        if (!PhotoUtils.isHttpString(fileName)) {
+            deleteFile.delete()
         }
+        autoClearedDisposable.add(RxJavaScheduler.runOnIoScheduler {
+            memoImageDAO.deleteMemoImage(fileName)
+        })
     }
 
     private fun isNotDelete(deleteFile: File) = !deleteFile.delete()

@@ -54,9 +54,16 @@ class PhotoUtils {
             }
         }
 
+        fun clearPhotoView(view: View) {
+            view.findViewById<LinearLayout>(R.id.ll_content_image_list).removeAllViews()
+        }
+
         fun addPhotoView(view: View, uri: Any, listener: DeletableImageView.OnDeletableImageClick) {
-            val deletableImageView =
-                DeletableImageView(view, uri.toString().split("/").last(), listener)
+            var link = uri.toString()
+            if (!isHttpString(link)) {
+                link = uri.toString().split("/").last()
+            }
+            val deletableImageView = DeletableImageView(view, link, listener)
             deletableImageViewList.add(deletableImageView)
 
             val errorListener = object : RequestListener<Drawable> {
