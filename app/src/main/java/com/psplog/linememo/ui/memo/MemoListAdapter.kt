@@ -52,15 +52,15 @@ class MemoListAdapter(var context: Context, val list: MutableList<Memo>) :
             memoThumbnail.setImageResource(0)
             if (isThumbnailNullOrEmpty(position)) {
                 with(list[position].thumbnail) {
-                    if (PhotoUtils.isHttpString(this!!)) {
-                        Glide.with(context)
-                            .load(this)
-                            .centerCrop()
-                            .into(memoThumbnail)
-                    } else {
+                    if (PhotoUtils.isNotHttpString(this!!)) {
                         val imageTemp = File(context.filesDir, this)
                         Glide.with(context)
                             .load(imageTemp)
+                            .centerCrop()
+                            .into(memoThumbnail)
+                    } else {
+                        Glide.with(context)
+                            .load(this)
                             .centerCrop()
                             .into(memoThumbnail)
                     }

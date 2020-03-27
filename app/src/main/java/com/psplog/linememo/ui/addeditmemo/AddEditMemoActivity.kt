@@ -10,14 +10,15 @@ import android.provider.MediaStore.Images.Media.CONTENT_TYPE
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.psplog.linememo.R
 import com.psplog.linememo.database.local.Memo
 import com.psplog.linememo.database.local.MemoImage
@@ -32,6 +33,8 @@ import java.io.File
 class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     override lateinit var presenter: AddEditMemoContract.Presenter
     private lateinit var imageTemp: File
+
+    var deletableImageViewList = ArrayList<PhotoUtils.Companion.DeletableImageItem>()
     private var isContentEdited = false
     private var isEditingMode = true
 
@@ -79,12 +82,13 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
             override fun onDialogLinkClick(link: String) {
                 if (link.isNotBlank()) {
                     var newLink = link
-                    if (!PhotoUtils.isHttpString(link)) {
+                    if (!PhotoUtils.isNotHttpString(link)) {
                         newLink = "http://$link"
                     }
                     isContentEdited = true
                     presenter.addMemoImageInQueue(newLink)
-                    PhotoUtils.addPhotoView(window.decorView, newLink, deleteImageListener)
+                    //PhotoUtils.addPhotoView(window.decorView, newLink, deleteImageListener)
+                    addPhotoViewInList(newLink,deleteImageListener)
                 }
             }
         }
@@ -92,7 +96,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     /**
      *  이미지 삭제버튼 클릭 리스너
      */
-    private var deleteImageListener = object : PhotoUtils.Companion.DeletableImageView.
+    private var deleteImageListener = object : PhotoUtils.Companion.DeletableImageItem.
     OnDeletableImageClick {
         override fun onDeletableImageClick(fileName: String) {
             presenter.deleteMemoImageInQueue(fileName)
@@ -113,6 +117,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
             setViewEditable(false)
             setCurrentEditingState(false)
         }
+
     }
 
     private fun isNewMemo() = currentMemoId == DEFAULT_MEMO_ID
@@ -123,6 +128,9 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
         }
+
+        rv_memo_ImageView_list.adapter=DeletableImageListAdapter(this, deletableImageViewList)
+        rv_memo_ImageView_list.layoutManager =LinearLayoutManager(this)
 
         val textChangeListener = object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) = Unit
@@ -143,7 +151,8 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
 
         when {
             requestCode == SELECT_CAMERA -> {
-                PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
+                addPhotoViewInList(imageTemp,deleteImageListener)
+                //PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
                 val fileName = imageTemp.toString().split("/").last()
                 presenter.addMemoImageInQueue(fileName)
                 isContentEdited = true
@@ -154,7 +163,9 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                 val fileName = PhotoUtils.createUUID() + ".png"
                 imageTemp = File(filesDir, fileName)
                 PhotoUtils.copyImageUriToFile(applicationContext, uri, imageTemp)
-                PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
+
+                //PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
+                addPhotoViewInList(imageTemp,deleteImageListener)
                 presenter.addMemoImageInQueue(fileName)
                 isContentEdited = true
             }
@@ -177,7 +188,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.addeditmemo_fragment_menu, menu)
         menuView = menu
-        changeEditingState(menu)
+        toggleEditingState(menu)
         return true
     }
 
@@ -209,7 +220,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                 onBackPressed()
             }
         }
-        changeEditingState(menuView)
+        toggleEditingState(menuView)
         return true
     }
 
@@ -218,16 +229,16 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
         isContentEdited = isEditing
     }
 
-    private fun changeEditingState(menu: Menu?) {
+    private fun toggleEditingState(menu: Menu?) {
         setViewEditable(isEditingMode)
         if (isEditingMode) {
             menu?.getItem(0)?.isVisible = true
             menu?.getItem(1)?.isVisible = false
-            PhotoUtils.setVisibilityDeleteButton(View.VISIBLE)
+            (rv_memo_ImageView_list.adapter as DeletableImageListAdapter).setDeleteButtonVisible(true)
         } else {
             menu?.getItem(0)?.isVisible = false
             menu?.getItem(1)?.isVisible = true
-            PhotoUtils.setVisibilityDeleteButton(View.GONE)
+            (rv_memo_ImageView_list.adapter as DeletableImageListAdapter).setDeleteButtonVisible(false)
         }
     }
 
@@ -244,6 +255,12 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
             currentMemoId
         )
 
+    private fun addPhotoViewInList(uri: Any, listener: PhotoUtils.Companion.DeletableImageItem.OnDeletableImageClick) {
+        val deletableImageItem = PhotoUtils.Companion.DeletableImageItem(uri, listener)
+        deletableImageViewList.add(deletableImageItem)
+        rv_memo_ImageView_list.adapter?.notifyDataSetChanged()
+    }
+
     override fun showMemoContent(memoContent: Memo) {
         et_content_title.setText(memoContent.memoTitle)
         et_content_content.setText(memoContent.memoContent)
@@ -251,15 +268,17 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     }
 
     override fun showMemoContentImage(memoContentImageList: List<MemoImage>) {
-        PhotoUtils.clearPhotoView(window.decorView)
+        val imageList = ArrayList<PhotoUtils.Companion.DeletableImageItem>()
         for (item in memoContentImageList) {
-            if (PhotoUtils.isHttpString(item.memoUri)) {
-                PhotoUtils.addPhotoView(window.decorView, item.memoUri, deleteImageListener)
+            if (!PhotoUtils.isNotHttpString(item.memoUri)) {
+                imageList.add(PhotoUtils.Companion.DeletableImageItem(item.memoUri,deleteImageListener))
             } else {
                 imageTemp = File(filesDir, item.memoUri)
-                PhotoUtils.addPhotoView(window.decorView, imageTemp, deleteImageListener)
+                imageList.add(PhotoUtils.Companion.DeletableImageItem(imageTemp,deleteImageListener))
             }
         }
+        deletableImageViewList.clear()
+        deletableImageViewList.addAll(imageList)
     }
 
     override fun showAddPhotoDialog() {

@@ -14,8 +14,8 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class AddEditMemoPresenter(
-    val context: AppCompatActivity,
-    var memoId: Int,
+    private val context: AppCompatActivity,
+    private var memoId: Int,
     private val addEditView: AddEditMemoContract.View
 ) : AddEditMemoContract.Presenter {
     private val autoClearedDisposable = AutoClearedDisposable(context, true)
@@ -82,7 +82,7 @@ class AddEditMemoPresenter(
 
     private fun deleteMemoImageFile(item: List<MemoImage>) {
         for (item in item) {
-            if (PhotoUtils.isHttpString(item.memoUri))
+            if (PhotoUtils.isNotHttpString(item.memoUri))
                 continue
 
             val deleteFile = File(context.filesDir, item.memoUri)
@@ -98,7 +98,7 @@ class AddEditMemoPresenter(
 
     override fun deleteMemoImageInQueue(fileName: String) {
         val deleteFile = File(context.filesDir, fileName)
-        if (!PhotoUtils.isHttpString(fileName)) {
+        if (!PhotoUtils.isNotHttpString(fileName)) {
             deleteFile.delete()
         }
         memoImageQueue.remove(fileName)
