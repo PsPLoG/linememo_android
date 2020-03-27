@@ -3,10 +3,7 @@ package com.psplog.linememo.utils
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
-import android.view.View
-import android.widget.LinearLayout
 import androidx.loader.content.CursorLoader
-import com.psplog.linememo.R
 import java.io.File
 import java.util.*
 
@@ -43,12 +40,13 @@ class PhotoUtils {
         open class DeletableImageItem(
             val uri: Any,
             val listener: OnDeletableImageClick,
-            var visibleDeleteButton : Boolean = true
+            var visibleDeleteButton: Boolean = true
         ) {
             interface OnDeletableImageClick {
                 fun onDeletableImageClick(fileName: String)
             }
-            fun getUriInFileName():String{
+
+            fun getUriInFileName(): String {
                 var link = uri.toString()
                 if (isNotHttpString(link)) {
                     link = uri.toString().split("/").last()

@@ -28,7 +28,7 @@ abstract class MemoDataBase : RoomDatabase() {
 
         private val lock = Any()
 
-        private  fun getInstance(context: Context): MemoDataBase {
+        private fun getInstance(context: Context): MemoDataBase {
             synchronized(lock) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(

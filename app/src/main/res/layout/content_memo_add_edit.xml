@@ -54,16 +54,10 @@
                 android:layout_marginBottom="16dp"
                 android:background="@color/blackText" />
 
-            <LinearLayout
-                android:visibility="invisible"
-                android:id="@+id/ll_content_image_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_memo_ImageView_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

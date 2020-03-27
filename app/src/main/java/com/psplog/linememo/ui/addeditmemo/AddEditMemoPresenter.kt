@@ -82,7 +82,7 @@ class AddEditMemoPresenter(
 
     private fun deleteMemoImageFile(item: List<MemoImage>) {
         for (item in item) {
-            if (PhotoUtils.isNotHttpString(item.memoUri))
+            if (!PhotoUtils.isNotHttpString(item.memoUri))
                 continue
 
             val deleteFile = File(context.filesDir, item.memoUri)
@@ -98,7 +98,7 @@ class AddEditMemoPresenter(
 
     override fun deleteMemoImageInQueue(fileName: String) {
         val deleteFile = File(context.filesDir, fileName)
-        if (!PhotoUtils.isNotHttpString(fileName)) {
+        if (PhotoUtils.isNotHttpString(fileName)) {
             deleteFile.delete()
         }
         memoImageQueue.remove(fileName)

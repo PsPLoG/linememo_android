@@ -48,7 +48,7 @@ class MemoPresenter(
 
     private fun deleteMemoImageFile(item: List<MemoImage>) {
         for (item in item) {
-            if (PhotoUtils.isNotHttpString(item.memoUri))
+            if (!PhotoUtils.isNotHttpString(item.memoUri))
                 continue
 
             val deleteFile = File(context.filesDir, item.memoUri)
