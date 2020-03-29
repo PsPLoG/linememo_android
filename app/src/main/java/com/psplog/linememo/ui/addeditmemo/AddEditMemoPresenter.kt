@@ -22,6 +22,7 @@ class AddEditMemoPresenter(
     private val memoDAO by lazy { MemoDataBase.provideMemoDAO(context) }
     private val memoImageDAO by lazy { MemoDataBase.provideMemoImageDAO(context) }
     private val memoImageQueue = ArrayList<String>()
+    private val memoImageDeleteQueue = ArrayList<String>()
 
     override fun start() {
         context.lifecycle.addObserver(autoClearedDisposable)
@@ -41,6 +42,10 @@ class AddEditMemoPresenter(
 
     override fun addMemoImageInQueue(uri: String) {
         memoImageQueue += uri
+    }
+
+    override fun addMemoImageInDeleteQueue(uri: String) {
+        memoImageDeleteQueue += uri
     }
 
     override fun pushImageQueue() {
@@ -96,15 +101,17 @@ class AddEditMemoPresenter(
         }
     }
 
-    override fun deleteMemoImageInQueue(fileName: String) {
-        val deleteFile = File(context.filesDir, fileName)
-        if (PhotoUtils.isNotHttpString(fileName)) {
-            deleteFile.delete()
+    override fun deleteMemoImageInQueue() {
+        for (fileName in memoImageDeleteQueue) {
+            val deleteFile = File(context.filesDir, fileName)
+            if (PhotoUtils.isNotHttpString(fileName)) {
+                deleteFile.delete()
+            }
+            memoImageQueue.remove(fileName)
+            autoClearedDisposable.add(RxJavaScheduler.runOnIoScheduler {
+                memoImageDAO.deleteMemoImage(fileName)
+            })
         }
-        memoImageQueue.remove(fileName)
-        autoClearedDisposable.add(RxJavaScheduler.runOnIoScheduler {
-            memoImageDAO.deleteMemoImage(fileName)
-        })
     }
 
     private fun isNotDelete(deleteFile: File) = !deleteFile.delete()

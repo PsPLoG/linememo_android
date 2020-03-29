@@ -43,3 +43,11 @@ p
 @app/src/main/java/com/psplog/linememo/ui/memo/MemoListAdapter.kt,e\3\e31082bfb2f627d32f6e72fbfa63a3cbebade1ad
 |
 Lapp/src/main/java/com/psplog/linememo/ui/addeditmemo/AddEditMemoPresenter.kt,2\f\2ffa3c814d3a66fd966e3c55e0c83227a0bec35c
+_
+/app/src/main/res/layout/imageview_deletable.xml,4\0\4049ebd79caf77e51effd04c9583c76622c9a587
+Å
+Qapp/src/main/java/com/psplog/linememo/ui/addeditmemo/DeletableImageListAdapter.kt,3\0\307ef7e3c7ca81414099265a0005ad6082964572
+Z
+*app/src/main/res/layout/item_memo_list.xml,8\b\8bf1ab28fc5835d0a6f9caebb2ef50c6668dfbd8
+a
+1app/src/main/res/layout/content_memo_add_edit.xml,7\9\7929a1c45e18f4d2dded7510201657b7f681e9dd

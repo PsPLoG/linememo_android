@@ -12,6 +12,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -97,7 +98,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     private var deleteImageListener = object : PhotoUtils.Companion.DeletableImageItem.
     OnDeletableImageClick {
         override fun onDeletableImageClick(fileName: String) {
-            presenter.deleteMemoImageInQueue(fileName)
+            presenter.addMemoImageInDeleteQueue(fileName)
             isContentEdited = true
         }
     }
@@ -192,8 +193,9 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
             R.id.menu_addedit_save -> {
                 if (isContentEdited) {
                     presenter.addMemo(getCurrentMemo())
-                    setCurrentEditingState(false)
+                    presenter.deleteMemoImageInQueue()
                 }
+                setCurrentEditingState(false)
             }
 
             R.id.menu_addedit_delete -> {
@@ -222,6 +224,9 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     private fun setCurrentEditingState(isEditing: Boolean) {
         isEditingMode = isEditing
         isContentEdited = isEditing
+        (rv_memo_ImageView_list.adapter as DeletableImageListAdapter).setDeleteButtonVisible(
+            true
+        )
     }
 
     private fun toggleEditingState(menu: Menu?) {

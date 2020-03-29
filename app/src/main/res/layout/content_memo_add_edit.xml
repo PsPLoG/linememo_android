@@ -9,10 +9,12 @@
     tools:showIn="@layout/activity_memo_add_edit">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/ns_addeditmemo_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/ll_addedit_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -53,11 +55,15 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@color/blackText" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_memo_ImageView_list"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_memo_ImageView_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

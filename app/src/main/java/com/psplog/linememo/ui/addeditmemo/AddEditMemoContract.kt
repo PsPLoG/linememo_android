@@ -23,9 +23,11 @@ interface AddEditMemoContract {
 
         fun addMemoImageInQueue(uri: String)
 
+        fun addMemoImageInDeleteQueue(uri: String)
+
         fun deleteMemo(memo: Memo)
 
-        fun deleteMemoImageInQueue(fileName: String)
+        fun deleteMemoImageInQueue()
 
         fun pushImageQueue()
 

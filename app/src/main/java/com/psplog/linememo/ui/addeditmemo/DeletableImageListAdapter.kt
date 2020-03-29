@@ -1,5 +1,6 @@
 package com.psplog.linememo.ui.addeditmemo
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -54,6 +55,9 @@ class DeletableImageListAdapter(
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
+//                    (context as Activity).runOnUiThread {
+//                        setDeleteButtonVisible(false)
+//                    }
                     return false
                 }
             }
