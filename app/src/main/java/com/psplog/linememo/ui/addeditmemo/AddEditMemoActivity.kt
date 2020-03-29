@@ -103,12 +103,19 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("memo_id",currentMemoId)
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_memo_add_edit)
         initView()
 
-        currentMemoId = intent.getIntExtra("memo_id", DEFAULT_MEMO_ID)
+        currentMemoId =
+            savedInstanceState?.getInt("memo_id") ?: intent.getIntExtra("memo_id", DEFAULT_MEMO_ID)
+
         presenter = AddEditMemoPresenter(this, currentMemoId, this)
         presenter.start()
 
