@@ -33,7 +33,7 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
     override lateinit var presenter: AddEditMemoContract.Presenter
     private lateinit var imageTemp: File
 
-    var deletableImageViewList = ArrayList<PhotoUtils.Companion.DeletableImageItem>()
+    private var deletableImageViewList = ArrayList<PhotoUtils.Companion.DeletableImageItem>()
     private var isContentEdited = false
     private var isEditingMode = true
 
@@ -86,7 +86,6 @@ class AddEditMemoActivity : AppCompatActivity(), AddEditMemoContract.View {
                     }
                     isContentEdited = true
                     presenter.addMemoImageInQueue(newLink)
-                    //PhotoUtils.addPhotoView(window.decorView, newLink, deleteImageListener)
                     addPhotoViewInList(newLink, deleteImageListener)
                 }
             }

@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <androidx.recyclerview.widget.RecyclerView
+                <com.psplog.linememo.utils.TestRecyclerView
                     android:id="@+id/rv_memo_ImageView_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

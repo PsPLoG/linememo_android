@@ -1,6 +1,5 @@
 package com.psplog.linememo.ui.addeditmemo
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -36,6 +35,7 @@ class DeletableImageListAdapter(
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
+
         with(holder) {
             val errorListener = object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -55,9 +55,6 @@ class DeletableImageListAdapter(
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-//                    (context as Activity).runOnUiThread {
-//                        setDeleteButtonVisible(false)
-//                    }
                     return false
                 }
             }
